@@ -460,6 +460,10 @@ func (z *Cash) IsLessThan(y *Cash) (bool, error) {
 	return r == -1, err
 }
 
+func (z *Cash) IsPositive() bool {
+	return z.Amt > 0
+}
+
 // errors
 var (
 	ErrBadString    = errors.New("malformed input string")
