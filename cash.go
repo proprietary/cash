@@ -168,10 +168,16 @@ func (z *Cash) String() string {
 		buf         bytes.Buffer
 		integerPart string
 		fracPart    string
+		neg         bool
 	)
 
-	buf.WriteRune(z.Currency) // dollar sign
+	if z.IsPositive() != true {
+		neg=true
+		z.Amt = z.Amt * -1 // make positive
+		buf.WriteString("(")
+	}
 
+	buf.WriteRune(z.Currency) // dollar sign
 	// decimal
 	decRaw := strconv.FormatInt(z.Amt, 10)
 	decRawLen := utf8.RuneCountInString(decRaw)
@@ -207,6 +213,11 @@ func (z *Cash) String() string {
 	buf.WriteString(integerPart) // write left side of decimal pt
 	buf.WriteRune(z.Decimal)     // decimal point
 	buf.WriteString(fracPart)    // write right side of decimal pt
+
+	if neg {
+		buf.WriteString(")")
+		z.Amt = z.Amt * -1 // make negative
+	}
 
 	return buf.String()
 }
