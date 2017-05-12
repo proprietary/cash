@@ -154,3 +154,15 @@ func TestCmp(t *testing.T) {
 	assert.Nil(t, err)
 	assert.EqualValues(t, false, is, "a != b so a.Equals(b) == false")
 }
+
+func TestRoundTrip(t *testing.T) {
+	expected := New(USD).SetCents(1001897)
+	actual, err := New(USD).SetString(expected.String())
+	assert.Nil(t, err)
+	assert.EqualValues(t, expected.Amt, actual.Amt)
+
+	expected = New(USD).SetCents(-1001897)
+	actual, err = New(USD).SetString(expected.String())
+	assert.Nil(t, err)
+	assert.EqualValues(t, expected.Amt, actual.Amt)
+}
