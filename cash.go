@@ -115,16 +115,27 @@ func roundLikeBankers(x int64) int64 {
 
 // SetString() on already allocated `Cash`
 func (z *Cash) SetString(src string) (*Cash, error) {
+	var neg bool = false
+	src = strings.Replace(src, "$", "", 1)
+	src = strings.Replace(src, ",", "", -1)
+	if strings.HasPrefix(src, "(") { // negative
+		z.Amt = z.Amt * -1
+		src = strings.Replace(src, "(", "", 1)
+		src = strings.Replace(src, ")", "", 1)
+		neg = true
+	}
 	var (
 		parts = strings.Split(src, string(z.Decimal))
 		err   error
 	)
-
 	switch len(parts) {
 	case 1: // just an integer
 		z.Amt, err = strconv.ParseInt(src, 10, 64)
 		if err != nil {
 			return nil, err
+		}
+		if neg {
+			z.Amt = z.Amt * -1
 		}
 		return z, nil
 	case 2: // decimal
@@ -149,6 +160,9 @@ func (z *Cash) SetString(src string) (*Cash, error) {
 			fracPart = roundLikeBankers(fracPart)
 		}
 		z.Amt = integerPart + fracPart
+		if neg {
+			z.Amt = z.Amt * -1
+		}
 		return z, nil
 	default:
 		return nil, ErrBadString
