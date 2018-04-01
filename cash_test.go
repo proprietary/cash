@@ -61,6 +61,21 @@ func TestRounding(t *testing.T) {
 	assert.EqualValues(t, 66700, a.Amt, "should equal")
 }
 
+func TestCommas(t *testing.T) {
+	a, err := NewUSD().SetString("1.00")
+	assert.Nil(t, err)
+	assert.EqualValues(t, "$1.00", a.String(), "should equal")
+	a, err = NewUSD().SetString("1000.00")
+	assert.Nil(t, err)
+	assert.EqualValues(t, "$1,000.00", a.String(), "should equal")
+	a, err = NewUSD().SetString("12345.67")
+	assert.Nil(t, err)
+	assert.EqualValues(t, "$12,345.67", a.String(), "should equal")
+	a, err = NewUSD().SetString("-1000.00")
+	assert.Nil(t, err)
+	assert.EqualValues(t, "($1,000.00)", a.String(), "should equal")
+}
+
 func TestMulByScalar(t *testing.T) {
 	a := NewUSD().SetCents(9022)
 	var scalar int64 = 6

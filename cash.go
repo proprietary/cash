@@ -188,10 +188,8 @@ func (z *Cash) String() string {
 	if z.IsPositive() != true {
 		neg=true
 		z.Amt = z.Amt * -1 // make positive
-		buf.WriteString("(")
 	}
 
-	buf.WriteRune(z.Currency) // dollar sign
 	// decimal
 	decRaw := strconv.FormatInt(z.Amt, 10)
 	decRawLen := utf8.RuneCountInString(decRaw)
@@ -232,8 +230,11 @@ func (z *Cash) String() string {
 		buf.WriteString(")")
 		z.Amt = z.Amt * -1 // make negative
 	}
-
-	return buf.String()
+	if neg {
+		return "(" + string(z.Currency) + strings.Trim(buf.String(), ",")
+	} else {
+		return string(z.Currency) + strings.Trim(buf.String(), ",")
+	}
 }
 
 // commafy string of digits; digit grouping by thousands
